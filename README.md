@@ -1,165 +1,172 @@
-# Ex 04 Implementation-of-Logistic-Regression-Model-to-Predict-the-Placement-Status-of-Student
+# EX - 05 Implementation-of-Logistic-Regression-Using-Gradient-Descent
 
 ## AIM:
-To write a program to implement the the Logistic Regression Model to Predict the Placement Status of Student.
+To write a program to implement the the Logistic Regression Using Gradient Descent.
 
 ## Equipments Required:
 1. Hardware – PCs
-2. Anaconda – Python 3.7 Installation / Moodle-Code Runner
+2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1.import pandas module.
+1. Import the necessary libraries: numpy, matplotlib.pyplot, and scipy.optimize.
+2. Load the data from the file "ex2data1.txt" using numpy.loadtxt and split it into input features X and target variable Y.
+3. Visualize the data by creating a scatter plot with two classes: "Admitted" and "Not admitted".
+4. Define the sigmoid function that maps any real number to the range [0, 1].
+5. Plot the sigmoid function using a range of values.
+6. Define the cost function for logistic regression and its gradient.
+7. Add a column of ones to the input features to account for the intercept term.
+8. Initialize the parameters theta with zeros.
+9. Compute the initial cost and gradient using the initial parameters.
+10. Print the initial cost and gradient.
+11. Use the scipy.optimize.minimize function to minimize the cost function and find the optimal parameters.
+12. Print the final cost and optimized parameters.
+13. Define a function to plot the decision boundary by creating a grid of points and computing the corresponding predicted class.
+14. Plot the decision boundary along with the data points.
+15. Calculate the probability of admission for a student with exam scores [45, 85].
+16. Define a function to predict the class labels based on the learned parameters.
+17. Calculate the accuracy of the model by comparing the predicted labels with the actual labels.
+18. Print the accuracy of the model## Program:
+```
+/*
+Program to implement the the Logistic Regression Using Gradient Descent.
+Developed by: Neha MA
+RegisterNumber:  212220040100
+*/
 
-2.Read the required csv file using pandas . 3.Import LabEncoder module.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import optimize
 
-4.From sklearn import logistic regression.
+data = np.loadtxt("/content/ex2data1.txt",delimiter=",")
 
-5.Predict the values of array.
+X = data[:, [0,1]]
+Y = data[:,2]
 
-6.Calculate the accuracy, confusion and classification report by importing the required modules from sklearn.
+X[:5]
 
-7.print the required values.
+Y[:5]
 
-8.End the program.
+plt.figure()
+plt.scatter(X[y == 1][:, 0], X[y == 1][:, 1], label="Admitted")
+plt.scatter(X[y == 0][:, 0], X[y == 0][:, 1], label="Not admitted")
+plt.xlabel("Exam 1 score")
+plt.ylabel("Exam 2 score")
+plt.legend()
+plt.show()
 
-## Program:
-~~~
-Program to implement the the Logistic Regression Model to Predict the Placement Status of Student.
-Developed by: Neha.MA
-RegisterNumber: 212220040100
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
 
+plt.plot()
+X_plot = np.linspace(-10, 10, 100)
+plt.plot(X_plot, sigmoid(X_plot))
+plt.show()
 
-import pandas as pd
+def costFunction(theta, X, y):
+    h = sigmoid(np.dot(X, theta))
+    J = -(np.dot(y, np.log(h)) + np.dot(1 - y, np.log(1 - h))) / X.shape[0]
+    grad = np.dot(X.T, h - y) / X.shape[0]
+    return J, grad
 
-data = pd.read_csv("Placement_Data.csv")
+X_train = np.hstack((np.ones((X.shape[0], 1)), X))
+theta = np.array([0, 0, 0])
+J, grad = costFunction(theta, X_train, y)
+print(J)  
+print(grad)  
 
-print(data.head())
+X_train = np.hstack((np.ones((X.shape[0], 1)), X))
+theta = np.array([-24, 0.2, 0.2])
+J, grad = costFunction(theta, X_train, y)
+print(J) 
+print(grad)  
 
-
-data1 = data.copy()
-data1= data1.drop(["sl_no","salary"],axis=1)
-print(data1.head())
-
-data1.isnull().sum()
-
-data1.duplicated().sum()
-
-from sklearn.preprocessing import LabelEncoder
-lc = LabelEncoder()
-
-data1["gender"] = lc.fit_transform(data1["gender"])
-data1["ssc_b"] = lc.fit_transform(data1["ssc_b"])
-data1["hsc_b"] = lc.fit_transform(data1["hsc_b"])
-data1["hsc_s"] = lc.fit_transform(data1["hsc_s"])
-data1["degree_t"]=lc.fit_transform(data["degree_t"])
-data1["workex"] = lc.fit_transform(data1["workex"])
-data1["specialisation"] = lc.fit_transform(data1["specialisation"])
-data1["status"]=lc.fit_transform(data1["status"])
-
-print(data1)
-
-y = data1["status"]
-
-x = data1.iloc[:,:-1]
-print(x)
-
-from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=0)
-
-from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression(solver="liblinear")
-print(lr.fit(x_train,y_train))
+def cost(theta, X, y):
+    h = sigmoid(np.dot(X, theta))
+    J = - (np.dot(y, np.log(h)) + np.dot(1 - y, np.log(1 - h))) / X.shape[0]
+    return J
 
 
-y_pred = lr.predict(x_test)
-print(y_pred)
+def gradient(theta, X, y):
+    h = sigmoid(np.dot(X, theta))
+    grad = np.dot(X.T, h - y) / X.shape[0]
+    return grad
 
 
-from sklearn.metrics import accuracy_score
-accuracy = accuracy_score(y_test,y_pred)
-print(accuracy)
+X_train = np.hstack((np.ones((X.shape[0], 1)), X))
+theta = np.array([0, 0, 0])
+res = optimize.minimize(fun=cost, x0=theta, args=(X_train, y),
+                        method='Newton-CG', jac=gradient)
+print(res.fun) 
+print(res.x)  
 
 
-from sklearn.metrics import confusion_matrix
-confusion = confusion_matrix(y_test,y_pred)
-print(confusion)
+def plotDecisionBoundary(theta, X, y):
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1),
+                         np.arange(y_min, y_max, 0.1))
+    X_plot = np.c_[xx.ravel(), yy.ravel()]
+    X_plot = np.hstack((np.ones((X_plot.shape[0], 1)), X_plot))
+    y_plot = np.dot(X_plot, theta).reshape(xx.shape)
+    
+    plt.figure()
+    plt.scatter(X[y == 1][:, 0], X[y == 1][:, 1], label="Admitted")
+    plt.scatter(X[y == 0][:, 0], X[y == 0][:, 1], label="Not admitted")
+    plt.contour(xx, yy, y_plot, levels=[0])
+    plt.xlabel("Exam 1 score")
+    plt.ylabel("Exam 2 score")
+    plt.legend()
+    plt.show()
 
 
-from sklearn.metrics import classification_report
-classification_report1 = classification_report(y_test,y_pred)
-print(classification_report1)
+plotDecisionBoundary(res.x, X, y)
 
-#for prediction lets take the first value from data 1
 
-prediction = [1,67,1,91,1,1,58,2,0,55,1,58.80]
-print(lr.predict([prediction])) # status should be 1 
+prob = sigmoid(np.dot(np.array([1, 45, 85]), res.x))
+print(prob)  
 
-#now we predict for random value asuuming gender ssc_p ssc_b .... be
 
-prediction = [1,80,1,90,1,1,90,1,0,85,1,85]
+def predict(theta, X):
+    X_train = np.hstack((np.ones((X.shape[0], 1)), X))
+    prob = sigmoid(np.dot(X_train, theta))
+    return (prob >= 0.5).astype(int)
 
-print(lr.predict([prediction]))
 
-~~~~
+np.mean(predict(res.x, X) == y)
+```
+
 ## Output:
-1.Placement data
-<img width="1012" alt="Screenshot 2023-05-17 at 2 14 21 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/10605748-e593-488f-a0ab-79607fb3e659">
 
-2.Salary data
-<img width="1012" alt="Screenshot 2023-05-17 at 2 14 27 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/8893e4e2-94c2-4b29-b649-e06b51d5cfb5">
+1. Array Value of x
+<img width="431" alt="Screenshot 2023-05-16 at 10 39 12 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/57e50604-5cae-49ba-b7b5-a138cd7588d2">
 
-3.Checking the null() function
+2. Array Value of y
+<img width="288" alt="Screenshot 2023-05-16 at 10 39 28 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/16164a5f-30c5-43c3-a36a-6ca915375960">
 
+3. Exam 1 - score graph
+<img width="653" alt="Screenshot 2023-05-08 at 3 48 08 PM" src="https://user-images.githubusercontent.com/71516398/236802371-9226619b-6d9e-4050-8823-9fc260645dbd.png">
 
-<img width="413" alt="Screenshot 2023-05-17 at 2 14 34 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/a243870c-bdb8-494a-9847-7fa2d1ac75c6">
+4. Sigmoid function graph
+<img width="455" alt="Screenshot 2023-05-08 at 3 49 49 PM" src="https://user-images.githubusercontent.com/71516398/236802380-8caee2d2-e62e-4b1c-a2a0-aaae45f58bba.png">
 
-4. Data Duplicate
+5. X_train_grad value
+<img width="455" alt="Screenshot 2023-05-08 at 3 49 54 PM" src="https://user-images.githubusercontent.com/71516398/236802385-f7f05c6e-ffda-4f90-b102-8a9851cde847.png">
 
-<img width="816" alt="Screenshot 2023-05-17 at 2 14 42 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/06a3754b-e4b2-46e0-9542-46c783976db0">
+6.Y_train_grad value
+7. Print res.x
 
+<img width="455" alt="Screenshot 2023-05-08 at 3 50 01 PM" src="https://user-images.githubusercontent.com/71516398/236802388-03722d86-060e-4bdb-83bb-d08dfafc1433.png">
 
-<img width="588" alt="Screenshot 2023-05-17 at 2 14 47 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/7e9bdf54-bebd-4193-b4f5-26e9c6f6894b">
+8. Decision boundary - graph for exam score
 
-5. Print data
+<img width="592" alt="Screenshot 2023-05-16 at 10 39 54 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/8bee94bd-bd8e-4d03-9a13-56743444a8a9">
 
-<img width="790" alt="Screenshot 2023-05-17 at 2 14 54 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/f1545105-0c46-4f70-9263-00ad91c5f627">
+9. Proability value 
+<img width="222" alt="Screenshot 2023-05-16 at 10 40 02 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/1dc378a6-270d-4648-8297-2bec4f4f6911">
 
-6. Data-status
+10. Prediction value of mean
+<img width="222" alt="Screenshot 2023-05-16 at 10 40 08 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/d370b2bc-57bc-48da-87b3-b15b6a94d083">
 
-
-<img width="431" alt="Screenshot 2023-05-17 at 2 15 01 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/3ebfb6cb-a04a-4f1a-8265-ea8f8325b100">
-
-
-8. y_prediction array
-
-<img width="682" alt="Screenshot 2023-05-17 at 2 15 09 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/834b6d00-6fdb-43de-9acd-4394d9f2bfcc">
-
-
-
-8.Accuracy value
-
-<img width="419" alt="Screenshot 2023-05-17 at 2 15 17 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/26e3e039-f623-43c1-b444-d133f2c31b76">
-
-
-
-9. Confusion array
-
-
-
-<img width="232" alt="Screenshot 2023-05-17 at 2 15 22 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/1cb1e74e-3c01-4f5c-a060-cb6d27bccbda">
-
-10. Classification report
-
-
-<img width="529" alt="Screenshot 2023-05-17 at 2 15 36 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/96676466-6396-4bbb-add7-6b8d83a81bb5">
-
-11.Prediction of LR
-
-
-<img width="217" alt="Screenshot 2023-05-17 at 2 15 47 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/66fb3ffd-bbb9-4265-b5ea-da309c9a6e77">
-
-
-<img width="217" alt="Screenshot 2023-05-17 at 2 15 50 PM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/42f52ddf-1aed-43d0-8ee9-af4ecf3c0810">
 
 ## Result:
-Thus the program to implement the the Logistic Regression Model to Predict the Placement Status of Student is written and verified using python programming.
+Thus the program to implement the the Logistic Regression Using Gradient Descent is written and verified using python programming.
