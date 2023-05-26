@@ -25,7 +25,8 @@ To write a program to implement the the Logistic Regression Using Gradient Desce
 15. Calculate the probability of admission for a student with exam scores [45, 85].
 16. Define a function to predict the class labels based on the learned parameters.
 17. Calculate the accuracy of the model by comparing the predicted labels with the actual labels.
-18. Print the accuracy of the model## Program:
+18. Print the accuracy of the model
+## Program:
 ```
 /*
 Program to implement the the Logistic Regression Using Gradient Descent.
@@ -161,7 +162,7 @@ np.mean(predict(res.x, X) == y)
 
 <img width="592" alt="Screenshot 2023-05-16 at 10 39 54 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/8bee94bd-bd8e-4d03-9a13-56743444a8a9">
 
-9. Proability value 
+9. Probability value 
 <img width="222" alt="Screenshot 2023-05-16 at 10 40 02 AM" src="https://github.com/JaivigneshJv/19AI410-Introduction-To-Machine-Learning/assets/71516398/1dc378a6-270d-4648-8297-2bec4f4f6911">
 
 10. Prediction value of mean
